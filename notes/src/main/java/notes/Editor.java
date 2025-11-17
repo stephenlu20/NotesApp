@@ -4,14 +4,17 @@ import java.nio.file.*;
 import java.util.Scanner;
 
 public class Editor {
-    Path path;
-    Path tempFile;
+    private Path path;
+    private Path tempFile;
+    private final String PATH = "notes/src/main/resources";
+    private final String TEMP_FILE = "temp-note.temp";
+
 
     public Editor (){
         try {
-            this.path = Paths.get("notes/src/main/resources");
+            this.path = Paths.get(this.PATH);
             Files.createDirectories(this.path);
-            this.tempFile = this.path.resolve("temp-note.temp");
+            this.tempFile = this.path.resolve(this.TEMP_FILE);
         } catch (Exception e) {
             System.out.println("Unable to find filepath");
         }
