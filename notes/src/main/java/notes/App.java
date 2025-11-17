@@ -2,12 +2,9 @@ package notes;
 
 import java.util.Scanner;
 
-/**
- * Hello world!
- */
 public class App {
     Scanner scanner;
-    PrintMessages printMessages;
+    PrintMessages printMessages = new PrintMessages();
     
     public static void main(String[] args) {
         App app = new App();
@@ -15,11 +12,11 @@ public class App {
     }
 
     public App() {
+
     }
 
     public void runApplication() {
         this.scanner = new Scanner(System.in);
-        this.printMessages = new PrintMessages();
         this.printMessages.welcome();
         whileLoop:
         while(true) {
@@ -29,8 +26,11 @@ public class App {
                     break whileLoop;
                 case "notes --help":
                     this.printMessages.notesHelp();
+                    break;
+                case "notes create":
                 default:
                     this.printMessages.invalidCommand();
+                    break;
             }
         }
         this.scanner.close();
