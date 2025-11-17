@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class App {
     Scanner scanner;
     PrintMessages printMessages = new PrintMessages();
+    Editor editor = new Editor();
     
     public static void main(String[] args) {
         App app = new App();
@@ -28,6 +29,14 @@ public class App {
                     this.printMessages.notesHelp();
                     break;
                 case "notes create":
+                    try {
+                        String content = this.editor.createNote();
+                        String filepath = this.editor.getNoteTitle(scanner);
+                        this.editor.saveFile(content, filepath);
+                        break;
+                    } catch (Exception e) {
+                        break;
+                    }
                 default:
                     this.printMessages.invalidCommand();
                     break;
