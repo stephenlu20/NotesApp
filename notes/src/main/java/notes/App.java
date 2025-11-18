@@ -2,6 +2,8 @@ package notes;
 
 import java.util.Scanner;
 
+import org.yaml.snakeyaml.*;
+
 public class App {
     Scanner scanner;
     PrintMessages printMessages = new PrintMessages();
@@ -30,8 +32,11 @@ public class App {
                     break;
                 case "notes create":
                     try {
+                        Metadata metadata = new Metadata("Stephen");
                         String content = this.editor.createNote();
                         String filepath = this.editor.getNoteTitle(scanner);
+                        metadata.setTags(metadata.askForTags(scanner));
+                        metadata.saveMetadata(filepath);
                         this.editor.saveFile(content, filepath);
                         break;
                     } catch (Exception e) {

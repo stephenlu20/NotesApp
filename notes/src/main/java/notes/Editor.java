@@ -33,7 +33,7 @@ public class Editor {
 
     public String getNoteTitle(Scanner scanner) {
         System.out.print("Enter note file name: ");
-        return scanner.nextLine().trim();    
+        return scanner.nextLine().trim();
     }
 
     public void saveFile(String fileName, String content) throws Exception{
