@@ -25,7 +25,7 @@ public class Metadata {
     private int priority;
 
     public Metadata() {
-        
+
     }
 
     public Metadata(String author) {
@@ -98,7 +98,7 @@ public class Metadata {
 
     public Metadata loadMetadata(String filepath) throws Exception {
         Yaml yaml = new Yaml();
-        try (FileInputStream inputStream = new FileInputStream("notes/src/main/metadata/" + filepath + ".yaml")) {
+        try (FileInputStream inputStream = new FileInputStream(Constants.METADATA_PATH + filepath + ".yaml")) {
             return yaml.loadAs(inputStream, Metadata.class);
         }
     }
@@ -134,7 +134,7 @@ public class Metadata {
     public void saveMetadata(String filepath) throws Exception {
         Yaml yaml = new Yaml();
         this.title = filepath;
-        try (FileWriter writer = new FileWriter("notes/src/main/metadata/" + filepath + ".yaml")) {
+        try (FileWriter writer = new FileWriter(Constants.METADATA_PATH + filepath + ".yaml")) {
             yaml.dump(this.toMap(), writer);
         }
     }

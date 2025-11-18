@@ -34,7 +34,7 @@ public class App {
                 case "q":
                     break whileLoop;
                 case "notes" :
-                    switch (input[1]) {
+                    switch (input[1]) { 
                         case "--help":
                             this.printMessages.notesHelp();
                             break newCommand;
@@ -43,6 +43,7 @@ public class App {
                             try {
                                 if (input.length == 2) {
                                     filepath = this.editor.getNoteTitle(scanner);
+                                    System.out.println(filepath + "testing");
                                 } else if (input.length == 3) {
                                     filepath = input[2];
                                 } else {
@@ -54,7 +55,7 @@ public class App {
                                     String content = this.editor.createNote();
                                     metadata.setTags(metadata.askForTags(scanner));
                                     metadata.saveMetadata(filepath);
-                                    this.editor.saveFile(content, filepath);
+                                    this.editor.saveFile(filepath, content);
                                 } else {
                                     printMessages.fileAlreadyExists();
                                 }
@@ -75,7 +76,16 @@ public class App {
                                 listNotes();
                             }
                             break newCommand;
-                }
+                        case "edit":
+                            if (input.length == 3) {
+                                editor.editNote(input[2]);
+                            } else {
+                                System.out.println("ELSE");
+                                this.printMessages.invalidCommand();
+                                break newCommand;
+                            }
+                            break newCommand;
+                    }
                 default:
                     this.printMessages.invalidCommand();
                     break;

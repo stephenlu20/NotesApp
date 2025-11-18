@@ -1,12 +1,12 @@
 package notes;
 
+import java.io.IOException;
 import java.nio.file.*;
 import java.util.Scanner;
 
 public class Editor {
     private Path path;
     private Path tempFile;
-
 
     public Editor (){
         try {
@@ -27,6 +27,20 @@ public class Editor {
         process.waitFor(); // wait until editor is closed
 
         return Files.readString(tempFile);
+    }
+
+    public String editNote(String path) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder("nano", this.path.toString() + "/" + path + ".note");
+            System.out.println(this.path.toString() + "/" + path + ".note");
+            pb.inheritIO();
+            Process process = pb.start();
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return path;
     }
 
     public String getNoteTitle(Scanner scanner) {
