@@ -39,8 +39,16 @@ public class App {
                             this.printMessages.notesHelp();
                             break newCommand;
                         case "create":
+                            String filepath = "";
                             try {
-                                String filepath = this.editor.getNoteTitle(scanner);
+                                if (input.length == 2) {
+                                    filepath = this.editor.getNoteTitle(scanner);
+                                } else if (input.length == 3) {
+                                    filepath = input[2];
+                                } else {
+                                    this.printMessages.invalidCommand();
+                                    break newCommand;
+                                }
                                 if (!filesList.contains(filepath)){
                                     Metadata metadata = new Metadata("Stephen");
                                     String content = this.editor.createNote();
