@@ -1,6 +1,7 @@
 package notes;
 
 import java.time.*;
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.yaml.snakeyaml.Yaml;
 import java.io.FileWriter;
+import java.io.IOException;
 
 public class Metadata {
     private String title;
@@ -21,6 +23,10 @@ public class Metadata {
     private String author;
     private String status;
     private int priority;
+
+    public Metadata() {
+        
+    }
 
     public Metadata(String author) {
         this.title = "new note";
@@ -95,6 +101,34 @@ public class Metadata {
         try (FileInputStream inputStream = new FileInputStream("notes/src/main/metadata/" + filepath + ".yaml")) {
             return yaml.loadAs(inputStream, Metadata.class);
         }
+    }
+
+    public static HashMap<String, Metadata> getFiles() {
+        HashMap<String, Metadata> map = new HashMap<>();
+        Yaml yaml = new Yaml();
+        File folder = new File(Constants.METADATA_PATH);
+
+        if (!folder.exists() || !folder.isDirectory()) {
+            throw new IllegalArgumentException("Invalid folder path: " + Constants.METADATA_PATH);
+        }
+
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".yaml"));
+
+        if (files == null) return map;
+
+        for (File file : files) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                Metadata data = yaml.loadAs(fis, Metadata.class);
+                if (data != null) {
+                    String keyName = file.getName().replace(".yaml", "");
+                    map.put(keyName, data);
+                }
+            } catch (IOException e) {
+                System.err.println("Error reading file: " + file.getName());
+                e.printStackTrace();
+            }
+        }
+        return map;
     }
 
     public void saveMetadata(String filepath) throws Exception {

@@ -1,14 +1,15 @@
 package notes;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class App {
     Scanner scanner;
     PrintMessages printMessages = new PrintMessages();
     Editor editor = new Editor();
-    ArrayList<String> files;
+    ArrayList<String> filesList;
+    HashMap<String, Metadata> filesMap;
     
     public static void main(String[] args) {
         App app = new App();
@@ -24,7 +25,8 @@ public class App {
         this.printMessages.welcome();
         whileLoop:
         while(true) {
-            this.files = getFileNames();
+            this.filesMap = Metadata.getFiles();
+            this.filesList = getFileNames();
             String input = this.scanner.nextLine();
             switch (input) {
                 case "q":
@@ -34,12 +36,16 @@ public class App {
                     break;
                 case "notes create":
                     try {
-                        Metadata metadata = new Metadata("Stephen");
                         String filepath = this.editor.getNoteTitle(scanner);
-                        String content = this.editor.createNote();
-                        metadata.setTags(metadata.askForTags(scanner));
-                        metadata.saveMetadata(filepath);
-                        this.editor.saveFile(content, filepath);
+                        if (!filesList.contains(filepath)){
+                            Metadata metadata = new Metadata("Stephen");
+                            String content = this.editor.createNote();
+                            metadata.setTags(metadata.askForTags(scanner));
+                            metadata.saveMetadata(filepath);
+                            this.editor.saveFile(content, filepath);
+                        } else {
+                            printMessages.fileAlreadyExists();
+                        }
                         break;
                     } catch (Exception e) {
                         break;
@@ -56,27 +62,15 @@ public class App {
     }
 
     public ArrayList<String> getFileNames() {
-        File folder = new File(Constants.PATH);
-        File[] files = folder.listFiles();
-        ArrayList<String> fileNames = new ArrayList<>();
-
-        if (files != null) {
-            for (File file : files) {
-                if (file.isFile() && file.getName().endsWith(".note")) {
-                    String name = file.getName().replace(".note", "").trim();
-                    fileNames.add(name);
-                }
-            }
-        }
+        ArrayList<String> fileNames = new ArrayList<>(filesMap.keySet());
         return fileNames;
     }
 
     public void listNotes() {
-        for (String s : files) {
+        for (String s : filesList) {
             System.out.println(s);
         }
     }
-
 
     public boolean isNumberInput(String input) {
         try {

@@ -28,6 +28,11 @@ public class PrintMessages {
         System.out.println("notes stats                      # Display statistics about your notes");
     }
 
+    public void fileAlreadyExists() {
+        System.out.println("File name already exists");
+        System.out.println("Please use 'notes edit' to edit existing file");
+    }
+
     public void invalidCommand() {
         System.out.println("Invalid Command");
     }
