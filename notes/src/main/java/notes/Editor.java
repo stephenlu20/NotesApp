@@ -6,15 +6,13 @@ import java.util.Scanner;
 public class Editor {
     private Path path;
     private Path tempFile;
-    private final String PATH = "notes/src/main/resources";
-    private final String TEMP_FILE = "temp-note.temp";
 
 
     public Editor (){
         try {
-            this.path = Paths.get(this.PATH);
+            this.path = Paths.get(Constants.PATH);
             Files.createDirectories(this.path);
-            this.tempFile = this.path.resolve(this.TEMP_FILE);
+            this.tempFile = this.path.resolve(Constants.TEMP_FILE);
         } catch (Exception e) {
             System.out.println("Unable to find filepath");
         }
