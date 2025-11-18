@@ -10,7 +10,7 @@ public class App {
     PrintMessages printMessages = new PrintMessages();
     Editor editor = new Editor();
     ArrayList<String> filesList;
-    HashMap<String, Metadata> filesMap;
+    HashMap<String, Note> filesMap;
     
     public static void main(String[] args) {
         App app = new App();
@@ -26,7 +26,7 @@ public class App {
         this.printMessages.welcome();
         whileLoop:
         while(true) {
-            this.filesMap = Metadata.getFiles();
+            this.filesMap = Note.getFiles();
             this.filesList = getFileNames();
             String[] input = this.scanner.nextLine().split(" ");
             newCommand:
@@ -110,14 +110,33 @@ public class App {
 
     public ArrayList<String> listByTag(String tag)  {
         ArrayList<String> list = new ArrayList<>();
-        for (HashMap.Entry<String, Metadata> entry : this.filesMap.entrySet()) {
-            List<String> currentList = entry.getValue().getTags();
+        for (HashMap.Entry<String, Note> entry : this.filesMap.entrySet()) {
+            List<String> currentList = entry.getValue().getMetadata().getTags();
             if (currentList.contains(tag)) {
                 list.add(entry.getKey());
             }
         }
         return list;
     }
+
+    public ArrayList<String> fileSearch(String searchTerm) {
+        ArrayList<String> list = new ArrayList<>();
+
+        for (HashMap.Entry<String, Note> entry : this.filesMap.entrySet()) {
+            if (entry.getKey().contains(searchTerm)) {
+                list.add(entry.getKey());
+            }
+            if (entry.getValue().getContent().contains(searchTerm)) {
+                list.add(entry.getKey());
+            }
+            List<String> currentList = entry.getValue().getMetadata().getTags();
+            if (currentList.contains(searchTerm)) {
+                list.add(entry.getKey());
+            }
+        }
+        return list;
+    }
+
     public boolean isNumberInput(String input) {
         try {
             Double.parseDouble(input);
