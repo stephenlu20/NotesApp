@@ -34,6 +34,11 @@ public class PrintMessages {
         System.out.println("Please use 'notes edit' to edit existing file");
     }
 
+    public void fileDoesNotExist() {
+        System.out.println("File does not exist");
+    }
+
+
     public void invalidCommand() {
         System.out.println("Invalid Command");
     }

@@ -78,7 +78,10 @@ public class App {
                             break newCommand;
                         case "edit":
                             if (input.length == 3) {
-                                editor.editNote(input[2]);
+                                String file = editor.editNote(input[2]);
+                                if (file == null) {
+                                    this.printMessages.fileDoesNotExist();
+                                }
                             } else {
                                 System.out.println("ELSE");
                                 this.printMessages.invalidCommand();

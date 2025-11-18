@@ -30,6 +30,10 @@ public class Editor {
     }
 
     public String editNote(String path) {
+        Path pathToFile = Paths.get(this.path.toString() + "/" + path + ".note");
+        if (!Files.exists(pathToFile)) {
+            return null;
+        }
         try {
             ProcessBuilder pb = new ProcessBuilder("nano", this.path.toString() + "/" + path + ".note");
             System.out.println(this.path.toString() + "/" + path + ".note");
