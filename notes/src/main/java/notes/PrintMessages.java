@@ -19,6 +19,7 @@ public class PrintMessages {
     public void notesHelp() {
         System.out.println("notes --help                     # Display help information");
         System.out.println("notes create                     # Create a new note (opens in default editor)");
+        System.out.println("notes create <note-id>           # Create a new note with <note-id> (opens in default editor)");
         System.out.println("notes list                       # List all notes");
         System.out.println("notes list --tag \"coursework\"    # List notes with specific tag");
         System.out.println("notes read <note-id>             # Display a specific note");
