@@ -81,9 +81,18 @@ public class App {
                                 String file = editor.editNote(input[2]);
                                 if (file == null) {
                                     this.printMessages.fileDoesNotExist();
+                                    break newCommand;
                                 }
                             } else {
-                                System.out.println("ELSE");
+                                this.printMessages.invalidCommand();
+                                break newCommand;
+                            }
+                            break newCommand;
+                        case "search":
+                            if (input.length == 3) {
+                                this.filesList = fileSearch(input[2]);
+                                listNotes();
+                            } else {
                                 this.printMessages.invalidCommand();
                                 break newCommand;
                             }
@@ -103,6 +112,9 @@ public class App {
     }
 
     public void listNotes() {
+        if (filesList.isEmpty()) {
+            System.out.println("No files");
+        }
         for (String s : filesList) {
             System.out.println(s);
         }
