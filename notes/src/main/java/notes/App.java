@@ -37,34 +37,29 @@ public class App {
                                 String title = Note.getNoteTitle(this.scanner);
                                 if (notes.fileExists(title)) {
                                     PrintMessages.fileAlreadyExists();
-                                    break newCommand;
                                 } else {
                                     Note note = new Note();
                                     note = Note.createNote(this.scanner, "Stephen", title);
                                     this.notes.addNote(note);
-                                    break newCommand;
                                 }
                             } else if (input.length == 3) {
                                 if (notes.fileExists(input[2])) {
                                     PrintMessages.fileAlreadyExists();
-                                    break newCommand;
                                 } else {
                                     Note note = new Note();
                                     note = Note.createNote(this.scanner, "Stephen", input[2]);
                                     this.notes.addNote(note);
-                                    break newCommand;
                                 }
                             } else {
                                 PrintMessages.invalidCommand();
-                                break newCommand;
                             }
+                            break newCommand;
                         case "list":
                             if (input.length == 4) {
                                 if (input[2].equals("--tag")) {
                                     this.notes.listNotes(input[3]);
                                 } else {
                                     PrintMessages.invalidCommand();
-                                    break newCommand;
                                 }
                             } else {
                                 this.notes.listNotes();;
@@ -74,7 +69,6 @@ public class App {
                             if (input.length == 3) {
                                 if (!notes.fileExists(input[2])) {
                                     PrintMessages.fileDoesNotExist();
-                                    break newCommand;
                                 } else {
                                     Note note = notes.searchByTitle(input[2]);
                                     note.edit();
