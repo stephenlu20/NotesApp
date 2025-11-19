@@ -1,7 +1,6 @@
 package notes;
 
 import java.util.Scanner;
-import java.time.*;
 
 public class App {
     Scanner scanner;
