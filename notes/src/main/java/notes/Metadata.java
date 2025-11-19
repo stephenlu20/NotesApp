@@ -79,7 +79,7 @@ public class Metadata {
         return tag;
     }
 
-    public ArrayList<String> addTag (ArrayList<String> tags) {
+    public ArrayList<String> addTags (ArrayList<String> tags) {
         for (String tag : tags) {
             this.tags.add(tag);
         }

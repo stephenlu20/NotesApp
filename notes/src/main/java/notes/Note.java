@@ -1,12 +1,13 @@
 package notes;
 
 import java.util.Scanner;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Note {
-    private Metadata metadata;
+    public Metadata metadata;
     private String content;
     private String path;
     private String yamlPath;
@@ -37,9 +38,21 @@ public class Note {
         note.metadata = new Metadata(title, author);
         ArrayList<String> tags = Metadata.askForTags(scanner);
         note.metadata.setTags(tags);
-        note.metadata.saveMetadata(title);
+        note.metadata.saveMetadata(title + ".yaml");
 
         return note;
+    }
+
+    public void edit() {
+        ProcessBuilder pb = new ProcessBuilder("nano", this.path);
+        pb.inheritIO();
+
+        try {
+            Process process = pb.start();
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private static String writeContent(){

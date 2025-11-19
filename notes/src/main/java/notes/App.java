@@ -1,6 +1,7 @@
 package notes;
 
 import java.util.Scanner;
+import java.time.*;
 
 public class App {
     Scanner scanner;
@@ -69,27 +70,30 @@ public class App {
                                 this.notes.listNotes();;
                             }
                             break newCommand;
-                        // case "edit":
-                        //     if (input.length == 3) {
-                        //         String file = editor.editNote(input[2]);
-                        //         if (file == null) {
-                        //             PrintMessages.fileDoesNotExist();
-                        //             break PrintMessages;
-                        //         }
-                        //     } else {
-                        //         PrintMessages.invalidCommand();
-                        //         break newCommand;
-                        //     }
-                        //     break newCommand;
-                        // case "search":
-                        //     if (input.length == 3) {
-                        //         this.filesList = fileSearch(input[2]);
-                        //         listNotes();
-                        //     } else {
-                        //         PrintMessages.invalidCommand();
-                        //         break newCommand;
-                        //     }
-                        //     break newCommand;
+                        case "edit":
+                            if (input.length == 3) {
+                                if (!notes.fileExists(input[2])) {
+                                    PrintMessages.fileDoesNotExist();
+                                    break newCommand;
+                                } else {
+                                    Note note = notes.searchByTitle(input[2]);
+                                    note.edit();
+                                    note.metadata.setModified(Instant.now().toString());
+                                    System.out.println(note.getYamlPath());
+                                    note.metadata.saveMetadata(note.metadata.getTitle());
+                                }
+                            } else {
+                                PrintMessages.invalidCommand();
+                            }
+                            break newCommand;
+                        case "search":
+                            if (input.length == 3) {
+                                Notes searchList = this.notes.search(input[2]);
+                                searchList.listNotes();
+                            } else {
+                                PrintMessages.invalidCommand();
+                            }
+                            break newCommand;
                     }
                 default:
                     PrintMessages.invalidCommand();

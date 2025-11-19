@@ -78,23 +78,53 @@ public class Notes {
         return (idx > 0) ? name.substring(0, idx) : name;
     }
 
+    public Note searchByTitle(String title) {
+        for (Note n : this.notes) {
+            if (n.metadata.getTitle().equals(title)) {
+                return n;
+            }
+        }
+        return new Note();
+    }
+
+    public Notes search(String query) {
+        Notes returnList = new Notes();
+        returnList.notes = new ArrayList<Note>();
+        for (Note n : this.notes) {
+            if (n.metadata.getTitle().equals(query) && !returnList.notes.contains(n)) {
+                returnList.notes.add(n);
+            }
+        }
+        for (Note n : this.notes) {
+            if (n.metadata.getTags().contains(query) && !returnList.notes.contains(n)) {
+                returnList.notes.add(n);
+            }
+        }
+        for (Note n : this.notes) {
+            if (n.getContent().contains(query) && !returnList.notes.contains(n)) {
+                returnList.notes.add(n);
+            }
+        }
+        return returnList;
+    }
+
     public void listNotes(String tag) {
         for (Note n : this.notes) {
-            if (n.getMetadata().getTags().contains(tag)) {
-                System.out.println(n.getMetadata().getTitle());
+            if (n.metadata.getTags().contains(tag)) {
+                System.out.println(n.metadata.getTitle());
             }
         }
     }
 
     public void listNotes() {
         for (Note n : this.notes) {
-            System.out.println(n.getMetadata().getTitle());
+            System.out.println(n.metadata.getTitle());
         }
     }
 
     public boolean fileExists(String fileName) {
         for (Note n : this.notes) {
-            if (fileName.equals(n.getMetadata().getTitle())) {
+            if (fileName.equals(n.metadata.getTitle())) {
                 return true;
             }
         }
