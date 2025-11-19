@@ -1,7 +1,6 @@
 package notes;
 
 import java.time.*;
-import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +13,7 @@ import java.util.stream.Collectors;
 import org.yaml.snakeyaml.Yaml;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class Metadata {
     private String title;
@@ -29,7 +29,17 @@ public class Metadata {
     }
 
     public Metadata(String author) {
-        this.title = "new note";
+        this.title = "untitled";
+        this.created = Instant.now().toString();
+        this.modified = Instant.now().toString();
+        this.tags = new ArrayList<String>();
+        this.author = author;
+        this.status = "REVIEW";
+        this.priority = 5;
+    }
+
+    public Metadata(String title, String author) {
+        this.title = title;
         this.created = Instant.now().toString();
         this.modified = Instant.now().toString();
         this.tags = new ArrayList<String>();
@@ -69,6 +79,13 @@ public class Metadata {
         return tag;
     }
 
+    public ArrayList<String> addTag (ArrayList<String> tags) {
+        for (String tag : tags) {
+            this.tags.add(tag);
+        }
+        return tags;
+    }
+
     public Map<String, Object> toMap() {
         Map<String, Object> data = new HashMap<>();
         data.put("title", this.getTitle());
@@ -82,7 +99,7 @@ public class Metadata {
         return data;
     }
 
-    public ArrayList<String> askForTags(Scanner scanner) {
+    public static ArrayList<String> askForTags(Scanner scanner) {
         System.out.print("Enter tags (comma-separated, or blank for none): ");
         String line = scanner.nextLine().trim();
 
@@ -96,46 +113,24 @@ public class Metadata {
                     .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public Metadata loadMetadata(String filepath) throws Exception {
+    public static Metadata loadMetadata(String filepath) {
         Yaml yaml = new Yaml();
         try (FileInputStream inputStream = new FileInputStream(Constants.METADATA_PATH + filepath + ".yaml")) {
             return yaml.loadAs(inputStream, Metadata.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Metadata();
         }
     }
 
-    public static HashMap<String, Metadata> getFiles() {
-        HashMap<String, Metadata> map = new HashMap<>();
-        Yaml yaml = new Yaml();
-        File folder = new File(Constants.METADATA_PATH);
-
-        if (!folder.exists() || !folder.isDirectory()) {
-            throw new IllegalArgumentException("Invalid folder path: " + Constants.METADATA_PATH);
-        }
-
-        File[] files = folder.listFiles((dir, name) -> name.endsWith(".yaml"));
-
-        if (files == null) return map;
-
-        for (File file : files) {
-            try (FileInputStream fis = new FileInputStream(file)) {
-                Metadata data = yaml.loadAs(fis, Metadata.class);
-                if (data != null) {
-                    String keyName = file.getName().replace(".yaml", "");
-                    map.put(keyName, data);
-                }
-            } catch (IOException e) {
-                System.err.println("Error reading file: " + file.getName());
-                e.printStackTrace();
-            }
-        }
-        return map;
-    }
-
-    public void saveMetadata(String filepath) throws Exception {
+    public void saveMetadata(String filepath) {
         Yaml yaml = new Yaml();
         this.title = filepath;
-        try (FileWriter writer = new FileWriter(Constants.METADATA_PATH + filepath + ".yaml")) {
+        Path finalNotePath = Constants.METADATA_PATH.resolve(filepath + ".yaml");
+        try (FileWriter writer = new FileWriter(finalNotePath.toString())) {
             yaml.dump(this.toMap(), writer);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

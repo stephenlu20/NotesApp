@@ -6,7 +6,7 @@ public class PrintMessages {
 
     }
 
-    public void welcome() {
+    public static void welcome() {
         System.out.println("=========================================");
         System.out.println("                Notes App                ");
         System.out.println("=========================================");
@@ -16,7 +16,7 @@ public class PrintMessages {
         System.out.println();
     }
 
-    public void notesHelp() {
+    public static void notesHelp() {
         System.out.println("notes --help                     # Display help information");
         System.out.println("notes create                     # Create a new note (opens in default editor)");
         System.out.println("notes create <note-id>           # Create a new note with <note-id> (opens in default editor)");
@@ -29,17 +29,17 @@ public class PrintMessages {
         System.out.println("notes stats                      # Display statistics about your notes");
     }
 
-    public void fileAlreadyExists() {
+    public static void fileAlreadyExists() {
         System.out.println("File name already exists");
         System.out.println("Please use 'notes edit' to edit existing file");
     }
 
-    public void fileDoesNotExist() {
+    public static void fileDoesNotExist() {
         System.out.println("File does not exist");
     }
 
 
-    public void invalidCommand() {
+    public static void invalidCommand() {
         System.out.println("Invalid Command");
     }
 }
