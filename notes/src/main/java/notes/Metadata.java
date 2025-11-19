@@ -5,15 +5,16 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import org.yaml.snakeyaml.Yaml;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Metadata {
     private String title;
@@ -87,12 +88,12 @@ public class Metadata {
     }
 
     public Map<String, Object> toMap() {
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
         data.put("title", this.getTitle());
+        data.put("author", this.getAuthor());
         data.put("created", this.getCreated());
         data.put("modified", this.getModified());
         data.put("tags", this.getTags());
-        data.put("author", this.getAuthor());
         data.put("status", this.getStatus());
         data.put("priority", this.getPriority());
 
@@ -114,23 +115,24 @@ public class Metadata {
     }
 
     public static Metadata loadMetadata(String filepath) {
-        Yaml yaml = new Yaml();
-        try (FileInputStream inputStream = new FileInputStream(Constants.METADATA_PATH + filepath + ".yaml")) {
-            return yaml.loadAs(inputStream, Metadata.class);
+        try {
+            List<String> text = Files.readAllLines(Paths.get(filepath));
+            boolean inYaml = false;
+            StringBuilder yamlBuilder = new StringBuilder();
+            for (String line : text) {
+                if (line.trim().equals("---")) {
+                    inYaml = !inYaml;
+                    continue;
+                }
+                if (inYaml) {
+                    yamlBuilder.append(line).append("\n");
+                }
+            }
+            Yaml yaml = new Yaml();
+            return yaml.loadAs(yamlBuilder.toString(), Metadata.class);
         } catch (IOException e) {
             e.printStackTrace();
             return new Metadata();
-        }
-    }
-
-    public void saveMetadata(String filepath) {
-        Yaml yaml = new Yaml();
-        this.title = filepath;
-        Path finalNotePath = Constants.METADATA_PATH.resolve(filepath + ".yaml");
-        try (FileWriter writer = new FileWriter(finalNotePath.toString())) {
-            yaml.dump(this.toMap(), writer);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

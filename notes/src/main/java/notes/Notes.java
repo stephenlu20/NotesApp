@@ -1,11 +1,11 @@
 package notes;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Notes {
     private ArrayList<Note> notes;
@@ -24,45 +24,28 @@ public class Notes {
 
     public ArrayList<Note> loadNotes(){
         try {
-            // Collect .note and .yaml files into maps by base name
-            Map<String, Path> noteFiles = Files.list(Constants.PATH)
-                    .filter(p -> p.getFileName().toString().endsWith(".note"))
-                    .collect(Collectors.toMap(
-                            p -> stripExtension(p.getFileName().toString()),
-                            p -> p
-                    ));
-
-            Map<String, Path> yamlFiles = Files.list(Constants.METADATA_PATH)
-                    .filter(p -> p.getFileName().toString().endsWith(".yaml"))
-                    .collect(Collectors.toMap(
-                            p -> stripExtension(p.getFileName().toString()),
-                            p -> p
-                    ));
+            
+            ArrayList<Path> filePaths = Files.list(Constants.PATH)
+                                        .filter(path -> Files.isRegularFile(path))
+                                        .filter(path -> path.getFileName().toString().endsWith(".note"))
+                                        .collect(Collectors.toCollection(ArrayList::new));
 
             ArrayList<Note> notes = new ArrayList<>();
 
-            // Match pairs by filename (base name)
-            for (String baseName : noteFiles.keySet()) {
-                if (!yamlFiles.containsKey(baseName)) {
-                    System.err.println("Warning: YAML missing for " + baseName);
-                    continue;
-                }
-
-                Path notePath = noteFiles.get(baseName);
-                Path yamlPath = yamlFiles.get(baseName);
-
+            for (Path path : filePaths) {
                 // Load metadata (your custom method)
-                Metadata metadata = Metadata.loadMetadata("/" + baseName);
+                Metadata metadata = Metadata.loadMetadata(path.toString());
 
                 // Load file content as string
-                String content = Files.readString(notePath);
+                String content = Files.readString(path);
+
+                content = content.split("---")[2];
 
                 // Construct Note object
                 Note note = new Note();
                 note.setMetadata(metadata);
                 note.setContent(content);
-                note.setPath(notePath.toString());
-                note.setYamlPath(yamlPath.toString());
+                note.setPath(path.toString());
 
                 this.notes.add(note);
             }
@@ -73,11 +56,6 @@ public class Notes {
         }
     }
 
-    private String stripExtension(String name) {
-        int idx = name.lastIndexOf('.');
-        return (idx > 0) ? name.substring(0, idx) : name;
-    }
-
     public Note searchByTitle(String title) {
         for (Note n : this.notes) {
             if (n.metadata.getTitle().equals(title)) {
@@ -85,6 +63,11 @@ public class Notes {
             }
         }
         return new Note();
+    }
+
+    public Note removeNote(Note note) {
+        this.notes.remove(note);
+        return note;
     }
 
     public Notes search(String query) {
@@ -120,6 +103,11 @@ public class Notes {
         for (Note n : this.notes) {
             System.out.println(n.metadata.getTitle());
         }
+    }
+
+    public void stats() {
+        System.out.print("Total number of notes: ");
+        System.out.println(notes.size());
     }
 
     public boolean fileExists(String fileName) {

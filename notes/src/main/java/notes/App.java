@@ -22,6 +22,7 @@ public class App {
         this.notes.loadNotes();
         whileLoop:
         while(true) {
+            System.out.print("> ");
             String[] input = this.scanner.nextLine().split(" ");
             newCommand:
             switch (input[0]) {
@@ -71,10 +72,7 @@ public class App {
                                     PrintMessages.fileDoesNotExist();
                                 } else {
                                     Note note = notes.searchByTitle(input[2]);
-                                    note.edit();
-                                    note.metadata.setModified(Instant.now().toString());
-                                    System.out.println(note.getYamlPath());
-                                    note.metadata.saveMetadata(note.metadata.getTitle());
+                                    note.edit(scanner);
                                 }
                             } else {
                                 PrintMessages.invalidCommand();
@@ -88,7 +86,39 @@ public class App {
                                 PrintMessages.invalidCommand();
                             }
                             break newCommand;
-                    }
+                        case "delete":
+                            if (input.length == 3) {
+                                if (!notes.fileExists(input[2])) {
+                                    PrintMessages.fileDoesNotExist();
+                                } else {
+                                    Note note = notes.searchByTitle(input[2]);
+                                    notes.removeNote(note);
+                                    note.delete();
+                                }
+                            } else {
+                                PrintMessages.invalidCommand();
+                            }
+                            break newCommand;
+                        case "read":
+                            if (input.length == 3) {
+                                if (!notes.fileExists(input[2])) {
+                                    PrintMessages.fileDoesNotExist();
+                                } else {
+                                    Note note = notes.searchByTitle(input[2]);
+                                    note.read();
+                                }
+                            } else {
+                                PrintMessages.invalidCommand();
+                            }
+                            break newCommand;
+                        case "stats":
+                            if (input.length == 2) {
+                                notes.stats();
+                            } else {
+                                PrintMessages.invalidCommand();
+                            }
+                            break newCommand;
+                        }
                 default:
                     PrintMessages.invalidCommand();
                     break;
@@ -97,13 +127,13 @@ public class App {
         this.scanner.close();
     }
 
-    private boolean isNumberInput(String input) {
-        try {
-            Double.parseDouble(input);
-            return true;
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input");
-            return false;
-        }
-    }
+    // private boolean isNumberInput(String input) {
+    //     try {
+    //         Double.parseDouble(input);
+    //         return true;
+    //     } catch (NumberFormatException e) {
+    //         System.out.println("Invalid input");
+    //         return false;
+    //     }
+    // }
 }
