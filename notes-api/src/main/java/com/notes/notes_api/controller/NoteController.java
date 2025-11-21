@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -46,6 +47,29 @@ public class NoteController {
         return ResponseEntity
                 .created(URI.create("/notes/" + saved.getTitle()))
                 .body(saved);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Note> patchNote(
+            @PathVariable Long id,
+            @RequestBody NoteUpdateDto dto) {
+
+        Note existing = noteService.getNoteById(id);
+        if (existing == null) return ResponseEntity.notFound().build();
+
+        // Only update fields that are not null in the request
+        if (dto.getTitle() != null) existing.setTitle(dto.getTitle());
+        if (dto.getContent() != null) existing.setContent(dto.getContent());
+        if (dto.getTags() != null) existing.setTags(dto.getTags());
+        if (dto.getAuthor() != null) existing.setAuthor(dto.getAuthor());
+        if (dto.getPriority() != null) existing.setPriority(dto.getPriority());
+        if (dto.getStatus() != null) existing.setStatus(dto.getStatus());
+
+        // Always update modified timestamp
+        existing.setModified(Instant.now());
+
+        Note updated = noteService.save(existing);
+        return ResponseEntity.ok(updated);
     }
 
     @PutMapping("/{id}")
