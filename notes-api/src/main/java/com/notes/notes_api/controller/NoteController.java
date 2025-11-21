@@ -1,6 +1,13 @@
 package com.notes.notes_api.controller;
 import com.notes.notes_api.dto.NoteContentUpdateDto;
+import com.notes.notes_api.dto.NoteCreateDto;
+import com.notes.notes_api.dto.NoteStatusUpdateDto;
+import com.notes.notes_api.dto.UpdateAuthorDto;
+import com.notes.notes_api.dto.UpdatePriorityDto;
+import com.notes.notes_api.dto.UpdateTagsDto;
+import com.notes.notes_api.dto.UpdateTitleDto;
 import com.notes.notes_api.entity.Note;
+import com.notes.notes_api.entity.NoteStatus;
 import com.notes.notes_api.service.NoteService;
 
 import org.springframework.http.ResponseEntity;
@@ -24,9 +31,9 @@ public class NoteController {
         return noteService.listNotes();
     }
 
-    @GetMapping("/{title}")
-    public ResponseEntity<Note> getNoteByTitle(@PathVariable String title) {
-        Note note = noteService.getNoteByTitle(title);
+    @GetMapping("/{id}")
+    public ResponseEntity<Note> getNoteById(@PathVariable Long id) {
+        Note note = noteService.getNoteById(id);
         if (note == null) {
             return ResponseEntity.notFound().build();
         }
@@ -34,33 +41,99 @@ public class NoteController {
     }
 
     @PostMapping
-    public ResponseEntity<Note> createNote(@RequestBody Note note) {
-        Note saved = noteService.saveNote(note);
-        return ResponseEntity.created(
-            URI.create("/notes/" + saved.getTitle())
-        ).body(saved);
+    public ResponseEntity<Note> createNote(@RequestBody NoteCreateDto dto) {
+        Note saved = noteService.createNote(dto);
+        return ResponseEntity
+                .created(URI.create("/notes/" + saved.getTitle()))
+                .body(saved);
     }
 
-    // inside NoteController.java
-    @PutMapping("/{title}/content")
-    public ResponseEntity<Note> updateNoteContent(
-            @PathVariable String title,
+    @PutMapping("/{id}")
+    public ResponseEntity<Note> updateContent(
+            @PathVariable long id,
             @RequestBody NoteContentUpdateDto dto) {
 
-        Note existing = noteService.getNoteByTitle(title);
-        if (existing == null) return ResponseEntity.notFound().build();
-
-        Note updated = noteService.updateContent(existing, dto.getContent());
-        return ResponseEntity.ok(updated);
-}
-
-    @DeleteMapping("/{title}")
-    public ResponseEntity<Void> deleteNoteByTitle(@PathVariable String title) {
-        Note existing = noteService.getNoteByTitle(title);
+        Note existing = noteService.getNoteById(id);
         if (existing == null) {
             return ResponseEntity.notFound().build();
         }
-        noteService.deleteNoteByTitle(title);
+
+        Note updated = noteService.updateContent(existing, dto.getContent());
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/{id}/title")
+    public ResponseEntity<Note> updateTitle(
+            @PathVariable Long id,
+            @RequestBody UpdateTitleDto dto) {
+
+        Note existing = noteService.getNoteById(id);
+        if (existing == null) return ResponseEntity.notFound().build();
+
+        Note updated = noteService.updateTitle(existing, dto.getTitle());
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/{id}/tags")
+    public ResponseEntity<Note> updateTags(
+            @PathVariable Long id,
+            @RequestBody UpdateTagsDto dto) {
+
+        Note existing = noteService.getNoteById(id);
+        if (existing == null) return ResponseEntity.notFound().build();
+
+        Note updated = noteService.updateTags(existing, dto.getTags());
+        return ResponseEntity.ok(updated);
+    }
+    
+    @PutMapping("/{id}/author")
+    public ResponseEntity<Note> updateAuthor(
+            @PathVariable Long id,
+            @RequestBody UpdateAuthorDto dto) {
+
+        Note existing = noteService.getNoteById(id);
+        if (existing == null) return ResponseEntity.notFound().build();
+
+        Note updated = noteService.updateAuthor(existing, dto.getAuthor());
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/{id}/priority")
+    public ResponseEntity<Note> updatePriority(
+            @PathVariable Long id,
+            @RequestBody UpdatePriorityDto dto) {
+
+        Note existing = noteService.getNoteById(id);
+        if (existing == null) return ResponseEntity.notFound().build();
+
+        try {
+            Note updated = noteService.updatePriority(existing, dto.getPriority());
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Note> toggleStatus(@PathVariable Long id) {
+        Note existing = noteService.getNoteById(id);
+        if (existing == null) return ResponseEntity.notFound().build();
+
+        // Toggle REVIEW <-> COMPLETE
+        NoteStatus newStatus = existing.getStatus() == NoteStatus.REVIEW
+                ? NoteStatus.COMPLETE
+                : NoteStatus.REVIEW;
+
+        Note updated = noteService.updateStatus(existing, newStatus);
+        return ResponseEntity.ok(updated);
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNoteById(@PathVariable long id) {
+        boolean deleted = noteService.deleteNoteById(id);
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.noContent().build();
     }
 }

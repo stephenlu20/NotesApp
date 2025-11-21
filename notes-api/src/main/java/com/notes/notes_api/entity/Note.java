@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Entity
+@org.hibernate.annotations.DynamicUpdate
 public class Note {
 
     @Id
@@ -13,11 +14,12 @@ public class Note {
     private Long id;
 
     private String title;
-    private Instant created;   // changed from String
-    private Instant modified;  // changed from String
+    private Instant created;
+    private Instant modified;
     private String author;
-    private String status;
-    private int priority;
+    @Enumerated(EnumType.STRING)
+    private NoteStatus status = NoteStatus.REVIEW;
+    private int priority = 5;
 
     @ElementCollection
     private List<String> tags;
@@ -67,11 +69,11 @@ public class Note {
         this.author = author;
     }
 
-    public String getStatus() {
+    public NoteStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(NoteStatus status) {
         this.status = status;
     }
 
