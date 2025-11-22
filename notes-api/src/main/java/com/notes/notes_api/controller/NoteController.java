@@ -1,6 +1,7 @@
 package com.notes.notes_api.controller;
 import com.notes.notes_api.dto.NoteContentUpdateDto;
 import com.notes.notes_api.dto.NoteCreateDto;
+import com.notes.notes_api.dto.NoteUpdateDto;
 import com.notes.notes_api.dto.NoteStatusUpdateDto;
 import com.notes.notes_api.dto.UpdateAuthorDto;
 import com.notes.notes_api.dto.UpdatePriorityDto;
@@ -68,7 +69,7 @@ public class NoteController {
         // Always update modified timestamp
         existing.setModified(Instant.now());
 
-        Note updated = noteService.save(existing);
+        Note updated = noteService.saveNote(existing);
         return ResponseEntity.ok(updated);
     }
 
