@@ -1,12 +1,14 @@
 package com.notes.notes_api.controller;
 
 import com.notes.notes_api.entity.Note;
+import com.notes.notes_api.entity.NoteStatus;
 import com.notes.notes_api.dto.*;
 import com.notes.notes_api.repository.NoteRepository;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -80,4 +82,59 @@ public class NoteController {
         return noteRepository.saveAll(notesToSave);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Note> updateNote(
+            @PathVariable Long id,
+            @RequestBody UpdateNoteDto dto) {
+
+        return noteRepository.findById(id).map(existingNote -> {
+
+            if (dto.getTitle() != null && !dto.getTitle().isBlank()) {
+                existingNote.setTitle(dto.getTitle());
+            }
+            if (dto.getAuthor() != null && !dto.getAuthor().isBlank()) {
+                existingNote.setAuthor(dto.getAuthor());
+            }
+            if (dto.getTags() != null) {
+                existingNote.setTags(dto.getTags());
+            }
+            if (dto.getPriority() != null) {
+                existingNote.setPriority(dto.getPriority());
+            }
+            if (dto.getContent() != null) {
+                existingNote.setContent(dto.getContent());
+            }
+
+            existingNote.setModified(LocalDateTime.now().toString());
+            Note updatedNote = noteRepository.save(existingNote);
+            return ResponseEntity.ok(updatedNote);
+
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/toggle-status")
+    public ResponseEntity<Note> toggleStatus(@PathVariable Long id) {
+        return noteRepository.findById(id).map(note -> {
+            NoteStatus current = note.getStatus();
+            if (current == NoteStatus.COMPLETE) {
+                note.setStatus(NoteStatus.REVIEW);
+            } else {
+                note.setStatus(NoteStatus.COMPLETE);
+            }
+
+            note.setModified(LocalDateTime.now().toString());
+            Note updated = noteRepository.save(note);
+            return ResponseEntity.ok(updated);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNote(@PathVariable Long id) {
+        if (!noteRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        noteRepository.deleteById(id);
+        return ResponseEntity.noContent().build(); // 204 - success, no body returned
+    }
 }
