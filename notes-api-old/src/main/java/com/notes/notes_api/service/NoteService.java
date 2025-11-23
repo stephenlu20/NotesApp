@@ -19,7 +19,7 @@ public class NoteService {
     }
 
     public Note createNote(NoteCreateDto dto) {
-        Instant now = Instant.now();
+        String now = Instant.now().toString();
 
         Note note = new Note();
         note.setTitle(dto.getTitle());
@@ -46,7 +46,7 @@ public class NoteService {
     }
     
     public Note saveNote(Note note) {
-        Instant now = Instant.now();
+        String now = Instant.now().toString();
         if (note.getId() == null) {
             note.setCreated(now);
         }
@@ -56,25 +56,25 @@ public class NoteService {
 
     public Note updateContent(Note note, String newContent) {
         note.setContent(newContent);
-        note.setModified(Instant.now());
+        note.setModified(Instant.now().toString(););
         return noteRepository.save(note);
     }
 
     public Note updateTitle(Note note, String newTitle) {
         note.setTitle(newTitle);
-        note.setModified(Instant.now());
+        note.setModified(Instant.now().toString(););
         return noteRepository.save(note);
     }
 
     public Note updateTags(Note note, List<String> newTags) {
         note.setTags(newTags);
-        note.setModified(Instant.now());
+        note.setModified(Instant.now().toString(););
         return noteRepository.save(note);
     }
 
     public Note updateAuthor(Note note, String newAuthor) {
         note.setAuthor(newAuthor);
-        note.setModified(Instant.now());
+        note.setModified(Instant.now().toString(););
         return noteRepository.save(note);
     }
 
@@ -83,13 +83,13 @@ public class NoteService {
             throw new IllegalArgumentException("Priority must be between 1 and 5");
         }
         note.setPriority(newPriority);
-        note.setModified(Instant.now());
+        note.setModified(Instant.now().toString(););
         return noteRepository.save(note);
     }
 
     public Note updateStatus(Note note, NoteStatus newStatus) {
         note.setStatus(newStatus);
-        note.setModified(Instant.now());
+        note.setModified(Instant.now().toString(););
         return noteRepository.save(note);
     }
 

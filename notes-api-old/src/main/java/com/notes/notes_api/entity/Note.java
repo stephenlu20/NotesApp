@@ -3,6 +3,7 @@ package com.notes.notes_api.entity;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,15 +15,17 @@ public class Note {
     private Long id;
 
     private String title;
-    private Instant created;
-    private Instant modified;
+    private String created = Instant.now().toString();
+    private String modified = Instant.now().toString();
     private String author;
+
     @Enumerated(EnumType.STRING)
     private NoteStatus status = NoteStatus.REVIEW;
+
     private int priority = 5;
 
-    @ElementCollection
-    private List<String> tags;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> tags = new ArrayList<>();
 
     @Lob
     private String content;
@@ -45,19 +48,19 @@ public class Note {
         this.title = title;
     }
 
-    public Instant getCreated() {
+    public String getCreated() {
         return created;
     }
 
-    public void setCreated(Instant created) {
+    public void setCreated(String created) {
         this.created = created;
     }
 
-    public Instant getModified() {
+    public String getModified() {
         return modified;
     }
 
-    public void setModified(Instant modified) {
+    public void setModified(String modified) {
         this.modified = modified;
     }
 

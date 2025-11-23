@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export default function CreateNoteForm() {
   const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState(""); // <-- new state for author
   const [tags, setTags] = useState("");
   const [priority, setPriority] = useState<number | "">("");
   const [content, setContent] = useState("");
@@ -9,15 +10,12 @@ export default function CreateNoteForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title) return;
+    if (!title || !author) return; // <-- require title AND author
 
-    // Convert comma-separated tags to array, or undefined if empty
     const tagsArray = tags.trim() ? tags.split(",").map((t) => t.trim()) : undefined;
-
-    // Only include priority if number 1-5
     const priorityValue = priority && priority >= 1 && priority <= 5 ? priority : undefined;
 
-    const body: any = { title };
+    const body: any = { title, author }; // <-- include author
     if (content.trim()) body.content = content;
     if (tagsArray) body.tags = tagsArray;
     if (priorityValue) body.priority = priorityValue;
@@ -32,6 +30,7 @@ export default function CreateNoteForm() {
         console.log("Created note:", data);
         // Reset form
         setTitle("");
+        setAuthor(""); // <-- reset author
         setTags("");
         setPriority("");
         setContent("");
@@ -42,12 +41,23 @@ export default function CreateNoteForm() {
   return (
     <div>
       <h2>Create Note</h2>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.5rem", maxWidth: "400px" }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: "0.5rem", maxWidth: "400px" }}
+      >
         <input
           type="text"
           placeholder="Title (required)"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="Author (required)" // <-- new input
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
           required
         />
 
