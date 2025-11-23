@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/notes")
 public class NoteController {
@@ -48,6 +50,13 @@ public class NoteController {
         return ResponseEntity
                 .created(URI.create("/notes/" + saved.getTitle()))
                 .body(saved);
+    }
+
+    @PostMapping("/batch")
+    public List<Note> createNotes(@RequestBody List<Note> notes) {
+        return notes.stream()
+                    .map(noteService::saveNote)
+                    .collect(Collectors.toList());
     }
 
     @PatchMapping("/{id}")
