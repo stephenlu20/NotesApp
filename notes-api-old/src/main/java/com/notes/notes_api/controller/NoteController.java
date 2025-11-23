@@ -76,7 +76,7 @@ public class NoteController {
         if (dto.getStatus() != null) existing.setStatus(dto.getStatus());
 
         // Always update modified timestamp
-        existing.setModified(Instant.now().toString(););
+        existing.setModified(Instant.now().toString());
 
         Note updated = noteService.saveNote(existing);
         return ResponseEntity.ok(updated);
