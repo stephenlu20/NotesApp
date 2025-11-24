@@ -8,7 +8,7 @@ import com.notes.notes_api.repository.NoteRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -105,7 +105,7 @@ public class NoteController {
                 existingNote.setContent(dto.getContent());
             }
 
-            existingNote.setModified(LocalDateTime.now().toString());
+            existingNote.setModified(Instant.now().toString());
             Note updatedNote = noteRepository.save(existingNote);
             return ResponseEntity.ok(updatedNote);
 
@@ -122,7 +122,7 @@ public class NoteController {
                 note.setStatus(NoteStatus.COMPLETE);
             }
 
-            note.setModified(LocalDateTime.now().toString());
+            note.setModified(Instant.now().toString());
             Note updated = noteRepository.save(note);
             return ResponseEntity.ok(updated);
         }).orElse(ResponseEntity.notFound().build());
