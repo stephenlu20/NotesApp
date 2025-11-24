@@ -8,6 +8,8 @@ interface Note {
   priority?: number;
   author?: string;
   status?: string;
+  created?: string;
+  modified?: string;
 }
 
 type StatusFilter = "ALL" | "REVIEW" | "COMPLETE";
@@ -114,6 +116,8 @@ export default function GetNoteForm() {
                 <p><strong>Status:</strong> {note.status}</p>
               )}
               <p><strong>Priority:</strong> {note.priority}</p>
+              <p><strong>Created:</strong> {note.created}</p>
+              <p><strong>Modified:</strong> {note.modified}</p>
             </div>
           ))}
         </div>
@@ -139,6 +143,8 @@ export default function GetNoteForm() {
           {singleNote.priority !== undefined && (
             <p><strong>Priority:</strong> {singleNote.priority}</p>
           )}
+          <p><strong>Created:</strong> {singleNote.created}</p>
+          <p><strong>Modified:</strong> {singleNote.modified}</p>
 
           {singleNote.content && (
             <div
